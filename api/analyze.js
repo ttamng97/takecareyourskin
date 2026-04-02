@@ -1,13 +1,21 @@
-export default async function handler(req, res) {
+export const config = {
+  runtime: 'edge',
+};
+
+export default async function handler(req) {
   if (req.method !== 'POST') {
-    return res.status(405).json({ error: 'Method not allowed' });
+    return new Response(JSON.stringify({ error: 'Method not allowed' }), { status: 405 });
   }
 
   try {
-    const { profile, products } = req.body;
+    const { profile, products } = await req.json();
     
     if (!profile || !products || products.length === 0) {
-      return res.status(400).json({ error: "Missing required data" });
+      return new Response(JSON.stringify({ error: "Thừa hoặc thiếu dữ liệu đầu vào." }), { status: 400 });
+    }
+
+    if (!process.env.DEEPSEEK_API_KEY) {
+      return new Response(JSON.stringify({ error: "Lỗi cấu hình: Chưa nhập DEEPSEEK_API_KEY trên Vercel!" }), { status: 500 });
     }
 
     let productContext = "";
@@ -17,8 +25,7 @@ export default async function handler(req, res) {
       productContext = `SẢN PHẨM 1:\n${products[0]}\n\nSẢN PHẨM 2:\n${products[1]}`;
     }
 
-    const prompt = `
-Bạn là chuyên gia da liễu AI cao cấp.
+    const prompt = `Bạn là chuyên gia da liễu AI cao cấp.
 HỒ SƠ DA KHÁCH HÀNG:
 - Loại da: ${profile.skinType}
 - Vấn đề: ${profile.issues.join(', ')}
@@ -26,17 +33,17 @@ HỒ SƠ DA KHÁCH HÀNG:
 
 ${productContext}
 
-NHIỆM VỤ: Phân tích các sản phẩm này. Nếu có 2 sản phẩm, yêu cầu ĐÁNH GIÁ XUNG ĐỘT xem dùng chung có bị kích ứng không (ví dụ: AHA + Retinol). 
+NHIỆM VỤ: Phân tích các sản phẩm này. Nếu có 2 sản phẩm, yêu cầu ĐÁNH GIÁ XUNG ĐỘT xem dùng chung có bị kích ứng không (ví dụ: AHA + Retinol).
 TRẢ VỀ STRICT JSON FORMAT:
 {
-"product_name": "Tên sản phẩm (Trường hợp 2 sản phẩm ghi: 'SP 1 + SP 2')",
+"product_name": "Tên sản phẩm (2 SP ghi: 'SP 1 + SP 2')",
 "verdict": "An toàn" hoặc "Rủi ro" hoặc "Xung đột cao",
 "reason": "Giải thích ngắn gọn mấu chốt",
 "ingredients": [
-  { "name": "Tên chất đáng chú ý (ghi rõ thuộc SP nào nếu có 2 SP)", "effect": "tác dụng/tác hại", "safety": "green|yellow|red" }
+  { "name": "Tên chất (ghi SP nào nếu 2 SP)", "effect": "tác dụng/hại", "safety": "green|yellow|red" }
 ],
-"cross_check_alert": "Nếu có 2 SP, hãy viết 1 đoạn đánh giá sự kết hợp (đá nhau hay hợp nhau). Nếu chỉ 1 SP thì ghi null.",
-"recommendation": "Tư vấn cuối cùng: Nếu rủi ro hoặc vượt ngân sách, gợi ý sản phẩm thay thế (Dupe Finder) rẻ và tốt hơn."
+"cross_check_alert": "Đoạn đánh giá kết hợp nếu 2 SP. 1 SP ghi null.",
+"recommendation": "Gợi ý Dupe rẻ mà tốt hơn (nếu rủi ro/vượt ngân sách)."
 }`;
 
     const response = await fetch("https://api.deepseek.com/chat/completions", {
@@ -54,8 +61,7 @@ TRẢ VỀ STRICT JSON FORMAT:
 
     if (!response.ok) {
       const errBody = await response.text();
-      console.error("Deepseek error:", errBody);
-      return res.status(500).json({ error: "Lỗi kết nối tới AI" });
+      return new Response(JSON.stringify({ error: `Lỗi DeepSeek API: ${errBody}` }), { status: 500 });
     }
 
     const data = await response.json();
@@ -68,10 +74,12 @@ TRẢ VỀ STRICT JSON FORMAT:
     }
 
     const jsonResult = JSON.parse(resText);
-    res.status(200).json(jsonResult);
+    return new Response(JSON.stringify(jsonResult), { 
+      status: 200, 
+      headers: { 'Content-Type': 'application/json' }
+    });
 
   } catch (err) {
-    console.error("Server API Error:", err);
-    res.status(500).json({ error: "Lỗi máy chủ" });
+    return new Response(JSON.stringify({ error: err.message || "Lỗi máy chủ nội bộ" }), { status: 500 });
   }
 }

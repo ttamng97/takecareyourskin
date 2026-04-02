@@ -83,7 +83,12 @@ function App() {
       });
 
       if (!res.ok) {
-        throw new Error("Server error");
+        let errStr = "Lỗi server";
+        try {
+          const errObj = await res.json();
+          errStr = errObj.error || errStr;
+        } catch(e) {}
+        throw new Error(errStr);
       }
 
       const data = await res.json();
@@ -92,7 +97,7 @@ function App() {
 
     } catch (err) {
       console.error(err);
-      alert("Lỗi server. Vui lòng thử lại!");
+      alert("Lỗi: " + err.message);
       setStep('scanner');
     }
   };
