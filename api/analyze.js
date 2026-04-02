@@ -14,9 +14,12 @@ export default async function handler(req) {
       return new Response(JSON.stringify({ error: "Thừa hoặc thiếu dữ liệu đầu vào." }), { status: 400 });
     }
 
-    if (!process.env.DEEPSEEK_API_KEY) {
+    const rawKeys = process.env.DEEPSEEK_API_KEY;
+    if (!rawKeys) {
       return new Response(JSON.stringify({ error: "Lỗi cấu hình: Chưa nhập DEEPSEEK_API_KEY trên Vercel!" }), { status: 500 });
     }
+    const keys = rawKeys.split(',').filter(k => k.trim() !== '');
+    const apiKey = keys[Math.floor(Math.random() * keys.length)].trim();
 
     let productContext = "";
     if (products.length === 1) {
@@ -50,7 +53,7 @@ TRẢ VỀ STRICT JSON FORMAT:
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        "Authorization": `Bearer ${process.env.DEEPSEEK_API_KEY}`
+        "Authorization": `Bearer ${apiKey}`
       },
       body: JSON.stringify({
         model: "deepseek-chat",

@@ -20,8 +20,9 @@ export default async function handler(req) {
       return new Response(JSON.stringify({ error: "Lỗi cấu hình: Chưa trỏ chìa khóa GEMINI_API_KEY trên máy chủ Vercel!" }), { status: 500 });
     }
     
-    // Pick the first key if there are multiple
-    const apiKey = rawKeys.split(',')[0].trim();
+    // Pick a random key from the comma-separated list
+    const keys = rawKeys.split(',').filter(k => k.trim() !== '');
+    const apiKey = keys[Math.floor(Math.random() * keys.length)].trim();
 
     // Remove data:image/jpeg;base64, prefix if present
     const cleanBase64 = imageBase64.replace(/^data:image\/(png|jpeg|jpg);base64,/, "");
