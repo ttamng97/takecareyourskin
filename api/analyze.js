@@ -32,6 +32,7 @@ export default async function handler(req) {
 HỒ SƠ DA KHÁCH HÀNG:
 - Loại da: ${profile.skinType}
 - Vấn đề: ${profile.issues.join(', ')}
+- Tần suất dùng treatment: ${profile.experience}
 - Ngân sách: ${profile.budget}
 
 ${productContext}

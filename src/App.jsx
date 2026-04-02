@@ -6,8 +6,8 @@ function App() {
   const [profile, setProfile] = useState(() => {
     try {
       const saved = localStorage.getItem('skincare_profile');
-      return saved ? JSON.parse(saved) : { skinType: '', issues: [], budget: '' };
-    } catch { return { skinType: '', issues: [], budget: '' }; }
+      return saved ? JSON.parse(saved) : { skinType: '', issues: [], budget: '', experience: '' };
+    } catch { return { skinType: '', issues: [], budget: '', experience: '' }; }
   });
 
   const [step, setStep] = useState(profile.skinType ? 'scanner' : 'onboarding-1'); 
@@ -107,14 +107,16 @@ function App() {
     }
   };
 
-  const handleStartAnalysis = () => {
+  const handleStartAnalysis = (directItem = null) => {
     let toProcess = [...scannedProducts];
-    if (currentInput.trim()) {
+    if (directItem) {
+      toProcess = [directItem];
+    } else if (currentInput.trim()) {
       toProcess.push(currentInput);
     }
     
     if (toProcess.length === 0) {
-      alert("Vui lòng nhập ít nhất 1 sản phẩm");
+      alert("Vui lòng nhập tên sản phẩm");
       return;
     }
     
@@ -199,20 +201,43 @@ function App() {
             ))}
           </div>
           <br/>
-          <button className="btn primary" onClick={() => setStep('onboarding-3')}>
+          <button className="btn primary" onClick={() => setStep('onboarding-2-5')}>
+            Tiếp tục
+          </button>
+        </div>
+      )}
+
+      {step === 'onboarding-2-5' && (
+        <div className="glass-panel text-center">
+          <h3>✨ Kinh nghiệm Skincare</h3>
+          <p style={{marginBottom: '16px'}}>Da bạn đã từng dùng các chất mạnh (Treatment) chưa?</p>
+          <div className="ingredient-list">
+            {['Chưa từng (Da nguyên bản)', 'Mới tập tành (AHA/BHA nhẹ)', 'Lão làng (Đã quen Retinol/Tret)'].map(exp => (
+              <button 
+                key={exp}
+                className={`btn ${profile.experience === exp ? 'selected' : ''}`}
+                onClick={() => setProfile({...profile, experience: exp})}
+                style={{marginBottom:'10px', width:'100%'}}
+              >
+                {exp}
+              </button>
+            ))}
+          </div>
+          <br/>
+          <button className="btn primary" disabled={!profile.experience} onClick={() => setStep('onboarding-3')}>
             Tiếp tục
           </button>
         </div>
       )}
 
       {step === 'onboarding-3' && (
-        <div className="glass-panel">
+        <div className="glass-panel text-center">
           <div style={{fontSize: '22px', fontWeight: '700', letterSpacing: '1px', background: 'linear-gradient(to right, #fff, #e8a6b2)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', marginBottom: '24px', textAlign: 'center'}}>AI SKINCARE</div>
           <h3>✨ Ngân sách mỹ phẩm</h3>
           <p>Để AI hạn chế việc gợi ý hàng vượt quá túi tiền.</p>
           <br/>
           <div className="ingredient-list">
-            {['Bình dân (< 300k)', 'Tầm trung (300k - 800k)', 'Cao cấp (> 800k)'].map(budget => (
+            {['Bình dân (< 300k)', 'Tầm trung (300k - 1 Triệu)', 'Cao cấp (> 1 Triệu)'].map(budget => (
               <button 
                 key={budget}
                 className={`btn ${profile.budget === budget ? 'selected' : ''}`}
@@ -292,23 +317,24 @@ function App() {
                 style={{marginBottom: '10px'}}
               ></textarea>
 
-              {scannedProducts.length === 1 ? (
+              {scannedProducts.length === 0 ? (
                 <button 
-                  className="btn secondary" 
-                  onClick={addProductToCart}
+                  className="btn primary" 
+                  onClick={() => handleStartAnalysis(currentInput)}
                   disabled={!currentInput.trim()}
+                  style={{marginBottom: '10px'}}
                 >
-                  ➕ Thêm vào hồ sơ phân tích
+                  ⚡ Bác Sĩ Phân Tích Món Này
                 </button>
-              ) : (
-                <button 
-                  className="btn secondary" 
-                  onClick={addProductToCart}
-                  disabled={!currentInput.trim()}
-                >
-                  ➕ Đưa vào hồ sơ phân tích
-                </button>
-              )}
+              ) : null}
+              
+              <button 
+                className="btn secondary" 
+                onClick={addProductToCart}
+                disabled={!currentInput.trim()}
+              >
+                {scannedProducts.length === 0 ? "➕ Đưa vào rổ để chờ Gộp Phân Tích Chéo" : "➕ Thêm món thứ 2 vào rổ"}
+              </button>
             </>
           ) : (
              <p style={{color: 'var(--success)', textAlign: 'center', margin: '20px 0', fontWeight:'600'}}>
@@ -316,15 +342,17 @@ function App() {
              </p>
           )}
 
-          <hr style={{border: 'none', borderTop: '1px solid var(--glass-border)', margin: '20px 0'}}/>
-
-          <button 
-            className="btn primary"
-            onClick={handleStartAnalysis}
-            disabled={scannedProducts.length === 0 && !currentInput.trim()}
-          >
-            {scannedProducts.length > 0 ? "⚡ Bắt Đầu Phân Tích Chéo" : "Phân Tích Đơn Lẻ Món Này"}
-          </button>
+          {scannedProducts.length > 0 && (
+             <>
+               <hr style={{border: 'none', borderTop: '1px solid var(--glass-border)', margin: '20px 0'}}/>
+               <button 
+                 className="btn primary"
+                 onClick={() => handleStartAnalysis()}
+               >
+                 ⚡ BẮT ĐẦU PHÂN TÍCH CHÉO {scannedProducts.length} MÓN
+               </button>
+             </>
+          )}
         </div>
       )}
 
