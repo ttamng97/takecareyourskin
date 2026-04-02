@@ -158,7 +158,7 @@ function App() {
   // Logo banner
   const Logo = () => (
     <div style={{display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '24px'}}>
-      <img src="/logo.svg" alt="Glow AI" style={{width: '40px', height: '40px', marginRight: '12px'}} />
+      <img src="/logo.png" alt="Glow AI" style={{width: '60px', height: '60px', marginRight: '12px'}} />
       <div style={{fontSize: '22px', fontWeight: '700', letterSpacing: '1px', background: 'linear-gradient(to right, #fff, #e8a6b2)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent'}}>AI SKINCARE</div>
     </div>
   );
@@ -295,7 +295,7 @@ function App() {
                  </button>
               )}
 
-              <p style={{fontSize: '14px', marginBottom: '8px'}}>Nhập Tên / Dán Thành Phần:</p>
+              <p style={{fontSize: '14px', marginBottom: '8px'}}>Hoặc nhập tên sản phẩm:</p>
               <textarea 
                 rows="2" 
                 placeholder="VD: Obagi Retinol 1.0..."
