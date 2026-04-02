@@ -190,20 +190,14 @@ function App() {
     setStep('scanner');
   };
 
-  // Logo banner
-  const Logo = () => (
-    <div style={{display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '24px'}}>
-      <img src="/logo.png" alt="Glow AI" style={{width: '60px', height: '60px', marginRight: '12px'}} />
-      <div style={{fontSize: '22px', fontWeight: '700', letterSpacing: '1px', background: 'linear-gradient(to right, #fff, #e8a6b2)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent'}}>AI SKINCARE</div>
-    </div>
-  );
+  // Remove Logo usage
 
   return (
     <div className="app-container">
       
       {step === 'onboarding-1' && (
         <div className="glass-panel text-center">
-          <Logo />
+          
           <p style={{marginBottom:'24px'}}>Bác sĩ da liễu cá nhân bỏ túi của bạn. Cá nhân hóa phân tích thành phần dựa trên hệ gen da.</p>
           
           <h3 style={{textAlign:'left'}}>✨ Bạn thuộc loại da nào?</h3>
@@ -226,7 +220,7 @@ function App() {
 
       {step === 'onboarding-2' && (
         <div className="glass-panel">
-          <Logo />
+          
           <h3>✨ Tình trạng da hiện tại</h3>
           <p style={{marginBottom: '16px'}}>Bạn có thể chọn nhiều vấn đề</p>
           <div className="grid-cols-2">
@@ -250,7 +244,7 @@ function App() {
 
       {step === 'onboarding-3' && (
         <div className="glass-panel">
-          <Logo />
+          
           <h3>✨ Ngân sách mỹ phẩm</h3>
           <p>Để AI hạn chế việc gợi ý hàng vượt quá túi tiền.</p>
           <br/>
@@ -274,7 +268,7 @@ function App() {
       {step === 'scanner' && (
         <div className="glass-panel" style={{padding: '20px 16px', overflowX: 'hidden'}}>
           <div style={{display:'flex', justifyContent:'space-between', alignItems:'center'}}>
-            <Logo />
+            
           </div>
 
           {/* VIRTUAL CLOSET SECTION */}
@@ -377,7 +371,7 @@ function App() {
 
       {step === 'analyzing' && (
         <div className="glass-panel" style={{textAlign: 'center', padding: '60px 20px'}}>
-          <Logo />
+          
           <div className="loader" style={{marginBottom: '24px'}}></div>
           <h2>Bác sĩ đang vắt óc<span className="typing-dot"></span></h2>
           <p>Truy xuất kho dữ liệu SkinSort Châu Á...</p>
@@ -388,7 +382,7 @@ function App() {
 
       {step === 'result' && analysisResult && (
         <div className="glass-panel" style={{padding: '24px 20px'}}>
-          <Logo />
+          <div style={{fontSize: '22px', fontWeight: '700', letterSpacing: '1px', background: 'linear-gradient(to right, #fff, #e8a6b2)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', marginBottom: '24px', textAlign: 'center'}}>AI SKINCARE</div>
           
           <h2 style={{fontSize: '22px', lineHeight: '1.3'}}>{analysisResult.product_name}</h2>
           
