@@ -221,10 +221,23 @@ function App() {
               </div>
               <div className="closet-scroll">
                 {closet.map((item, idx) => (
-                  <div className="closet-item" key={idx} onClick={() => addFromClosetToCart(item)}>
-                    <div className="closet-item-icon">🧴</div>
-                    <div className="closet-item-name">{item}</div>
-                    <div className="closet-item-add">+ Lôi ra</div>
+                  <div className="closet-item" key={idx} style={{display:'flex', alignItems:'center'}}>
+                    <div className="closet-item-icon" onClick={() => addFromClosetToCart(item)}>🧴</div>
+                    <div className="closet-item-name" onClick={() => addFromClosetToCart(item)} style={{flex: 1, paddingRight: '8px'}}>{item}</div>
+                    <div style={{display:'flex', gap: '6px', alignItems: 'center'}}>
+                      <div className="closet-item-add" onClick={() => addFromClosetToCart(item)}>+ Lôi ra</div>
+                      <div 
+                        onClick={(e) => { 
+                          e.stopPropagation(); 
+                          if(window.confirm(`Xóa '${item}' khỏi Tủ Đồ Ảo?`)) {
+                            setCloset(closet.filter(c => c !== item)); 
+                          }
+                        }} 
+                        style={{fontSize: '14px', cursor: 'pointer', padding: '4px', opacity: 0.8}}
+                      >
+                        🗑️
+                      </div>
+                    </div>
                   </div>
                 ))}
               </div>
