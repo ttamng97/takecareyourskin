@@ -148,10 +148,21 @@ function App() {
     const el = document.getElementById('capture-zone');
     if (!el) return;
     try {
-      const origBg = el.style.background;
-      el.style.background = '#291d22'; // Ensure solid background for sharp capture
-      const canvas = await html2canvas(el, { scale: 3 });
-      el.style.background = origBg;
+      // Tạm thời tắt backdrop-filter để tránh lỗi mờ màu của html2canvas
+      const origFilter = el.style.backdropFilter;
+      const origWebkitFilter = el.style.webkitBackdropFilter;
+      el.style.backdropFilter = 'none';
+      el.style.webkitBackdropFilter = 'none';
+
+      const canvas = await html2canvas(el, { 
+        backgroundColor: '#1a1417', // Màu nền gốc của body
+        scale: 3,
+        useCORS: true
+      });
+
+      el.style.backdropFilter = origFilter;
+      el.style.webkitBackdropFilter = origWebkitFilter;
+
       const link = document.createElement('a');
       link.download = `PhanTich_${Date.now()}.png`;
       link.href = canvas.toDataURL('image/png');
