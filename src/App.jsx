@@ -261,10 +261,10 @@ function App() {
 
           {scannedProducts.length < 2 ? (
             <>
-              <p style={{fontSize: '14px', marginBottom: '8px'}}>Nhập tên sản phẩm hoặc mã Barcode/Serial:</p>
+              <p style={{fontSize: '14px', marginBottom: '8px', color: 'var(--accent)'}}>Nhập chính xác tên Sản phẩm (Không nhập Mã vạch/Số):</p>
               <textarea 
                 rows="2" 
-                placeholder="VD: Obagi Retinol hoặc 893456..."
+                placeholder="VD: Kem chống nắng La Roche Posay..."
                 value={currentInput}
                 onChange={(e) => setCurrentInput(e.target.value)}
                 style={{marginBottom: '10px'}}
