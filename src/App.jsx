@@ -55,7 +55,7 @@ function App() {
   const saveToCloset = () => {
     if (analysisResult && analysisResult.product_name) {
       const name = analysisResult.product_name;
-      if (!closet.includes(name) && name !== 'Sản phẩm chưa rõ' && !name.includes('+')) {
+      if (!closet.includes(name) && name !== 'Sản phẩm chưa rõ') {
         setCloset([...closet, name]);
         alert("Đã cất vào Tủ Đồ Ảo thành công! 💖");
       } else {
@@ -295,11 +295,9 @@ function App() {
           
           <h2 style={{fontSize: '22px', lineHeight: '1.3'}}>{analysisResult.product_name}</h2>
           
-          {!analysisResult.product_name.includes('+') && (
-            <button className="btn secondary" onClick={saveToCloset} style={{padding: '10px 16px', fontSize: '14px', marginBottom: '16px'}}>
-              👜 Cất chai này vào Tủ Đồ Ảo
-            </button>
-          )}
+          <button className="btn secondary" onClick={saveToCloset} style={{padding: '10px 16px', fontSize: '14px', marginBottom: '16px'}}>
+            👜 Cất chai này vào Tủ Đồ Ảo
+          </button>
 
           <div className={`alert-box ${analysisResult.verdict === 'An toàn' ? 'success' : 'danger'}`}>
             <div style={{fontSize: '28px'}}>{analysisResult.verdict === 'An toàn' ? '✨' : '⚠️'}</div>
