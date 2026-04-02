@@ -210,18 +210,21 @@ function App() {
 
           {scannedProducts.length < 2 ? (
             <>
-              {isCameraActive ? (
-                <div className="scanner-frame active">
-                  <video ref={videoRef} className="scanner-video" autoPlay playsInline></video>
-                  <div className="scan-line"></div>
-                </div>
-              ) : (
-                <div className="scanner-frame" style={{background: 'rgba(0,0,0,0.3)', borderStyle: 'dashed'}}>
+              <div className={`scanner-frame ${isCameraActive ? 'active' : ''}`} style={{background: isCameraActive ? '#000' : 'rgba(0,0,0,0.3)', borderStyle: isCameraActive ? 'solid' : 'dashed'}}>
+                <video 
+                   ref={videoRef} 
+                   className="scanner-video" 
+                   autoPlay playsInline 
+                   style={{ display: isCameraActive ? 'block' : 'none' }}
+                ></video>
+                {isCameraActive && <div className="scan-line"></div>}
+                
+                {!isCameraActive && (
                    <button className="btn secondary" style={{width: 'auto'}} onClick={startCamera}>
                      📸 Mở Camera
                    </button>
-                </div>
-              )}
+                )}
+              </div>
 
               {isCameraActive && (
                  <button className="btn primary" onClick={handleCapture} style={{marginBottom: '16px'}}>
