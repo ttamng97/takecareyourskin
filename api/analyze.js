@@ -41,17 +41,19 @@ ${productContext}
 NHIỆM VỤ: 
 1. Nếu đầu vào là một dãy số hoặc mã vạch (Serial), hãy sử dụng tệp dữ liệu kiến thức của bạn để truy xuất ra đúng Tên sản phẩm và Thành phần chính của mã vạch đó (hoặc phỏng đoán mỹ phẩm sát nhất).
 2. Phân tích các sản phẩm này. Nếu có 2 sản phẩm, yêu cầu ĐÁNH GIÁ XUNG ĐỘT xem dùng chung có bị kích ứng không (ví dụ: AHA + Retinol).
+3. Đóng vai chuyên gia Review mĩ phẩm: Nói ngắn gọn, xài ngôn ngữ bình dân, dí dỏm, KHÔNG dùng từ ngữ y khoa khô khan.
 
 TRẢ VỀ STRICT JSON FORMAT:
 {
 "product_name": "Tên sản phẩm (NẾU LÀ MÃ VẠCH, XIN HÃY GHI TÊN NHẬN DIỆN ĐƯỢC CHỨ KHÔNG GHI LẠI SỐ. Kèm '+ SP 2')",
 "verdict": "An toàn" hoặc "Rủi ro" hoặc "Xung đột cao",
-"reason": "Giải thích ngắn gọn mấu chốt",
+"reason": "Giải thích ngắn gọn mấu chốt, bình dân",
 "ingredients": [
-  { "name": "Tên chất (ghi SP nào nếu 2 SP)", "effect": "tác dụng/hại", "safety": "green|yellow|red" }
+  { "name": "Tên chất (ghi SP nào nếu 2 SP)", "effect": "tác dụng/hại (viết dễ hiểu)", "safety": "green|yellow|red" }
 ],
-"cross_check_alert": "Đoạn đánh giá kết hợp nếu 2 SP. 1 SP ghi null.",
-"recommendation": "Gợi ý Dupe rẻ mà tốt hơn (nếu rủi ro/vượt ngân sách)."
+"cross_check_alert": "Đoạn đánh giá kết hợp dễ hiểu nếu có 2 SP. 1 SP ghi null.",
+"recommendation": "Gợi ý thay thế nếu có nguy hiểm hoặc vượt hầu bao.",
+"recommendation_keyword": "Tên NGẮN GỌN (Từ khóa Shopee) của CHÍNH SẢN PHẨM KHUYÊN THAY THẾ KHI NÃY (Ví dụ: 'The Ordinary Azelaic Acid 10%'). Nếu đồ cũ dùng tốt thì ghi lại tên hãng + tên món đồ cũ."
 }`;
 
     const response = await fetch("https://api.deepseek.com/chat/completions", {

@@ -138,7 +138,10 @@ function App() {
     const el = document.getElementById('capture-zone');
     if (!el) return;
     try {
-      const canvas = await html2canvas(el, { backgroundColor: '#141414', scale: 2 });
+      const origBg = el.style.background;
+      el.style.background = '#291d22'; // Ensure solid background for sharp capture
+      const canvas = await html2canvas(el, { scale: 3 });
+      el.style.background = origBg;
       const link = document.createElement('a');
       link.download = `PhanTich_${Date.now()}.png`;
       link.href = canvas.toDataURL('image/png');
@@ -149,8 +152,9 @@ function App() {
   };
 
   const openShopeeAffiliate = () => {
-    if (!analysisResult || !analysisResult.product_name) return;
-    const query = encodeURIComponent(analysisResult.product_name);
+    if (!analysisResult) return;
+    const keyword = analysisResult.recommendation_keyword || analysisResult.product_name;
+    const query = encodeURIComponent(keyword);
     // User's Publisher ID: an_17208190000
     window.open(`https://shopee.vn/search?keyword=${query}&utm_campaign=-&utm_content=BocPhotApp&utm_medium=affiliates&utm_source=an_17208190000`, '_blank');
   };
@@ -254,23 +258,21 @@ function App() {
               </div>
               <div className="closet-scroll">
                 {closet.map((item, idx) => (
-                  <div className="closet-item" key={idx} style={{display:'flex', alignItems:'center'}}>
-                    <div className="closet-item-icon" onClick={() => addFromClosetToCart(item)}>🧴</div>
-                    <div className="closet-item-name" onClick={() => addFromClosetToCart(item)} style={{flex: 1, paddingRight: '8px'}}>{item}</div>
-                    <div style={{display:'flex', gap: '6px', alignItems: 'center'}}>
-                      <div className="closet-item-add" onClick={() => addFromClosetToCart(item)}>+ Lôi ra</div>
-                      <div 
-                        onClick={(e) => { 
-                          e.stopPropagation(); 
-                          if(window.confirm(`Xóa '${item}' khỏi Tủ Đồ Ảo?`)) {
-                            setCloset(closet.filter(c => c !== item)); 
-                          }
-                        }} 
-                        style={{fontSize: '14px', cursor: 'pointer', padding: '4px', opacity: 0.8}}
-                      >
-                        🗑️
-                      </div>
+                  <div className="closet-item" key={idx} style={{position: 'relative'}}>
+                    <div 
+                      onClick={(e) => { 
+                        e.stopPropagation(); 
+                        if(window.confirm(`Xóa '${item}' khỏi Tủ Đồ Ảo?`)) {
+                          setCloset(closet.filter(c => c !== item)); 
+                        }
+                      }} 
+                      style={{position: 'absolute', top: '4px', right: '4px', fontSize: '12px', cursor: 'pointer', padding: '4px', opacity: 0.6}}
+                    >
+                      ❌
                     </div>
+                    <div className="closet-item-icon" onClick={() => addFromClosetToCart(item)} style={{marginTop: '4px'}}>🧴</div>
+                    <div className="closet-item-name" onClick={() => addFromClosetToCart(item)}>{item}</div>
+                    <div className="closet-item-add" onClick={() => addFromClosetToCart(item)}>+ Lôi ra</div>
                   </div>
                 ))}
               </div>
