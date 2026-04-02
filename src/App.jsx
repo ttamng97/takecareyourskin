@@ -21,9 +21,9 @@ function App() {
     localStorage.setItem('skincare_closet', JSON.stringify(closet));
   }, [closet]);
   
-  // Camera state
   const videoRef = useRef(null);
   const [isCameraActive, setIsCameraActive] = useState(false);
+  const [isScanning, setIsScanning] = useState(false);
   const [analysisResult, setAnalysisResult] = useState(null);
 
   const toggleIssue = (issue) => {
@@ -57,10 +57,45 @@ function App() {
     }
   };
 
-  const handleCapture = () => {
-    stopCamera();
-    setCurrentInput("Nước hoa hồng, Alcohol Denat, Salicylic Acid, Fragrance, Water...");
-    alert("AI đã bóc tách chữ từ ảnh thành công! Bạn có thể chỉnh sửa lại chữ nếu cần.");
+  const handleCapture = async () => {
+    if (!videoRef.current) return;
+    
+    const canvas = document.createElement('canvas');
+    canvas.width = videoRef.current.videoWidth;
+    canvas.height = videoRef.current.videoHeight;
+    const ctx = canvas.getContext('2d');
+    ctx.drawImage(videoRef.current, 0, 0, canvas.width, canvas.height);
+    
+    const base64Image = canvas.toDataURL('image/jpeg', 0.6);
+    
+    setIsScanning(true);
+
+    try {
+      const res = await fetch("/api/scan", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ imageBase64: base64Image })
+      });
+
+      if (!res.ok) {
+        let errStr = "Lỗi Scan Server";
+        try {
+          const errObj = await res.json();
+          errStr = errObj.error || errStr;
+        } catch(e) {}
+        throw new Error(errStr);
+      }
+
+      const data = await res.json();
+      setCurrentInput(data.text);
+      stopCamera();
+      
+    } catch (err) {
+      console.error(err);
+      alert("Lỗi quét chữ: " + err.message);
+    } finally {
+      setIsScanning(false);
+    }
   };
 
   useEffect(() => {
@@ -290,8 +325,8 @@ function App() {
               </div>
 
               {isCameraActive && (
-                 <button className="btn primary" onClick={handleCapture} style={{marginBottom: '16px'}}>
-                   ✨ Bóc tách hóa học
+                 <button className="btn primary" onClick={handleCapture} disabled={isScanning} style={{marginBottom: '16px'}}>
+                   {isScanning ? "Đang trích xuất chữ..." : "✨ Chụp & Bóc tách thành phần"}
                  </button>
               )}
 
