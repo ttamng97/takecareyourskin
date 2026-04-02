@@ -6,11 +6,11 @@ function App() {
   const [profile, setProfile] = useState(() => {
     try {
       const saved = localStorage.getItem('skincare_profile');
-      return saved ? JSON.parse(saved) : { skinType: '', issues: [], budget: '', experience: '' };
-    } catch { return { skinType: '', issues: [], budget: '', experience: '' }; }
+      return saved ? JSON.parse(saved) : { gender: '', skinType: '', issues: [], budget: '', experience: '' };
+    } catch { return { gender: '', skinType: '', issues: [], budget: '', experience: '' }; }
   });
 
-  const [step, setStep] = useState(profile.skinType ? 'scanner' : 'onboarding-1'); 
+  const [step, setStep] = useState(profile.skinType ? 'scanner' : 'onboarding'); 
   
   useEffect(() => {
     localStorage.setItem('skincare_profile', JSON.stringify(profile));
@@ -160,95 +160,47 @@ function App() {
   return (
     <div className="app-container">
       
-      {step === 'onboarding-1' && (
-        <div className="glass-panel text-center">
-          <div style={{fontSize: '22px', fontWeight: '700', letterSpacing: '1px', background: 'linear-gradient(to right, #fff, #e8a6b2)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', marginBottom: '24px'}}>AI SKINCARE</div>
-          <p style={{marginBottom:'24px'}}>Bác sĩ da liễu cá nhân bỏ túi của bạn. Cá nhân hóa phân tích thành phần dựa trên hệ gen da.</p>
+      {step === 'onboarding' && (
+        <div className="glass-panel" style={{textAlign: 'left', padding: '24px 20px'}}>
+          <div style={{fontSize: '22px', fontWeight: '700', letterSpacing: '1px', background: 'linear-gradient(to right, #fff, #e8a6b2)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', marginBottom: '24px', textAlign: 'center'}}>AI SKINCARE</div>
           
-          <h3 style={{textAlign:'left'}}>✨ Bạn thuộc loại da nào?</h3>
-          <div className="ingredient-list">
+          <h3 style={{fontSize: '16px', color: 'var(--accent)'}}>1. Giới tính của bạn</h3>
+          <div className="grid-cols-2" style={{marginBottom: '20px'}}>
+            {['Nam', 'Nữ'].map(g => (
+              <button key={g} className={`btn ${profile.gender === g ? 'selected' : ''}`} onClick={() => setProfile({...profile, gender: g})} style={{padding: '10px', fontSize: '15px'}}>{g}</button>
+            ))}
+          </div>
+
+          <h3 style={{fontSize: '16px', color: 'var(--accent)'}}>2. Loại da cơ bản</h3>
+          <div className="grid-cols-2" style={{marginBottom: '20px'}}>
             {['Da khô', 'Da thường', 'Da dầu', 'Da hỗn hợp'].map(type => (
-              <button 
-                key={type}
-                className={`btn ${profile.skinType === type ? 'selected' : ''}`}
-                onClick={() => setProfile({...profile, skinType: type})}
-              >
-                {type}
-              </button>
+              <button key={type} className={`btn ${profile.skinType === type ? 'selected' : ''}`} onClick={() => setProfile({...profile, skinType: type})} style={{padding: '10px', fontSize: '15px', marginBottom:'0'}}>{type}</button>
             ))}
           </div>
-          <button className="btn primary" disabled={!profile.skinType} onClick={() => setStep('onboarding-2')}>
-            Tạo Hồ Sơ So Sánh
-          </button>
-        </div>
-      )}
 
-      {step === 'onboarding-2' && (
-        <div className="glass-panel">
-          <div style={{fontSize: '22px', fontWeight: '700', letterSpacing: '1px', background: 'linear-gradient(to right, #fff, #e8a6b2)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', marginBottom: '24px', textAlign: 'center'}}>AI SKINCARE</div>
-          <h3>✨ Tình trạng da hiện tại</h3>
-          <p style={{marginBottom: '16px'}}>Bạn có thể chọn nhiều vấn đề</p>
-          <div className="grid-cols-2">
+          <h3 style={{fontSize: '16px', color: 'var(--accent)'}}>3. Vấn đề đang gặp (Chọn nhiều)</h3>
+          <div className="grid-cols-2" style={{marginBottom: '20px'}}>
             {['Mụn ẩn', 'Lão hóa', 'Nhạy cảm', 'Sạm nám', 'Mụn viêm', 'Lỗ chân lông to'].map(issue => (
-              <button 
-                key={issue}
-                className={`btn ${profile.issues.includes(issue) ? 'selected' : ''}`}
-                onClick={() => toggleIssue(issue)}
-                style={{padding: '12px 10px', fontSize: '15px', marginBottom:'0'}}
-              >
-                {issue}
-              </button>
+              <button key={issue} className={`btn ${profile.issues.includes(issue) ? 'selected' : ''}`} onClick={() => toggleIssue(issue)} style={{padding: '10px', fontSize: '15px', marginBottom:'0'}}>{issue}</button>
             ))}
           </div>
-          <br/>
-          <button className="btn primary" onClick={() => setStep('onboarding-2-5')}>
-            Tiếp tục
-          </button>
-        </div>
-      )}
 
-      {step === 'onboarding-2-5' && (
-        <div className="glass-panel text-center">
-          <h3>✨ Kinh nghiệm Skincare</h3>
-          <p style={{marginBottom: '16px'}}>Da bạn đã từng dùng các chất mạnh (Treatment) chưa?</p>
-          <div className="ingredient-list">
+          <h3 style={{fontSize: '16px', color: 'var(--accent)'}}>4. Kinh nghiệm bôi thoa (Treatment)</h3>
+          <div style={{marginBottom: '20px'}}>
             {['Chưa từng (Da nguyên bản)', 'Mới tập tành (AHA/BHA nhẹ)', 'Lão làng (Đã quen Retinol/Tret)'].map(exp => (
-              <button 
-                key={exp}
-                className={`btn ${profile.experience === exp ? 'selected' : ''}`}
-                onClick={() => setProfile({...profile, experience: exp})}
-                style={{marginBottom:'10px', width:'100%'}}
-              >
-                {exp}
-              </button>
+              <button key={exp} className={`btn ${profile.experience === exp ? 'selected' : ''}`} onClick={() => setProfile({...profile, experience: exp})} style={{marginBottom:'8px', width:'100%', padding: '10px', fontSize: '15px'}}>{exp}</button>
             ))}
           </div>
-          <br/>
-          <button className="btn primary" disabled={!profile.experience} onClick={() => setStep('onboarding-3')}>
-            Tiếp tục
-          </button>
-        </div>
-      )}
 
-      {step === 'onboarding-3' && (
-        <div className="glass-panel text-center">
-          <div style={{fontSize: '22px', fontWeight: '700', letterSpacing: '1px', background: 'linear-gradient(to right, #fff, #e8a6b2)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', marginBottom: '24px', textAlign: 'center'}}>AI SKINCARE</div>
-          <h3>✨ Mức giá mỹ phẩm thường dùng</h3>
-          <p>Để AI gợi ý các bến đỗ làm đẹp phù hợp với thói quen của bạn.</p>
-          <br/>
-          <div className="ingredient-list">
-            {['Bình dân (< 300k)', 'Tầm trung (300k - 1 Triệu)', 'Cao cấp (> 1 Triệu)'].map(budget => (
-              <button 
-                key={budget}
-                className={`btn ${profile.budget === budget ? 'selected' : ''}`}
-                onClick={() => setProfile({...profile, budget})}
-              >
-                {budget}
-              </button>
+          <h3 style={{fontSize: '16px', color: 'var(--accent)'}}>5. Mức giá thường mua</h3>
+          <div style={{marginBottom: '28px', display: 'flex', flexDirection: 'column', gap: '8px'}}>
+             {['Bình dân (< 300k)', 'Tầm trung (300k - 1 Triệu)', 'Cao cấp (> 1 Triệu)'].map(budget => (
+              <button key={budget} className={`btn ${profile.budget === budget ? 'selected' : ''}`} onClick={() => setProfile({...profile, budget})} style={{padding: '10px', fontSize: '15px', margin: 0}}>{budget}</button>
             ))}
           </div>
-          <button className="btn primary" disabled={!profile.budget} onClick={() => setStep('scanner')}>
-            Khởi Động Bác Sĩ AI
+
+          <button className="btn primary" disabled={!profile.gender || !profile.skinType || !profile.experience || !profile.budget} onClick={() => setStep('scanner')}>
+            Hoàn Tất Hồ Sơ & Bắt Đầu
           </button>
         </div>
       )}
@@ -295,7 +247,7 @@ function App() {
             <p style={{fontSize: '13px', opacity: 0.8, margin: 0}}>
               Hồ sơ: {profile.skinType} | {profile.budget}
             </p>
-            <span style={{fontSize: '12px', color: 'var(--accent)', cursor: 'pointer', textDecoration: 'underline'}} onClick={() => setStep('onboarding-1')}>
+            <span style={{fontSize: '12px', color: 'var(--accent)', cursor: 'pointer', textDecoration: 'underline'}} onClick={() => setStep('onboarding')}>
               ✏️ Sửa hồ sơ
             </span>
           </div>

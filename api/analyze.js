@@ -30,6 +30,7 @@ export default async function handler(req) {
 
     const prompt = `Bạn là chuyên gia da liễu AI cao cấp.
 HỒ SƠ DA KHÁCH HÀNG:
+- Giới tính: ${profile.gender}
 - Loại da: ${profile.skinType}
 - Vấn đề: ${profile.issues.join(', ')}
 - Tần suất dùng treatment: ${profile.experience}
