@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
+import Tesseract from 'tesseract.js';
 import './App.css';
 
 function App() {
@@ -24,6 +25,7 @@ function App() {
   const videoRef = useRef(null);
   const [isCameraActive, setIsCameraActive] = useState(false);
   const [isScanning, setIsScanning] = useState(false);
+  const [scanProgress, setScanProgress] = useState('');
   const [analysisResult, setAnalysisResult] = useState(null);
 
   const toggleIssue = (issue) => {
@@ -69,25 +71,24 @@ function App() {
     const base64Image = canvas.toDataURL('image/jpeg', 0.6);
     
     setIsScanning(true);
+    setScanProgress('Đang khởi động Mắt Thần Offline...');
 
     try {
-      const res = await fetch("/api/scan", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ imageBase64: base64Image })
-      });
+      const { data: { text } } = await Tesseract.recognize(
+        base64Image,
+        'eng',
+        { logger: m => {
+            if (m.status === 'recognizing text') {
+              setScanProgress(`Đang dịch chữ (${Math.round(m.progress * 100)}%)...`);
+            } else {
+              setScanProgress('Đang tải dữ liệu AI (Chỉ lâu ở lần đầu)...');
+            }
+          } 
+        }
+      );
 
-      if (!res.ok) {
-        let errStr = "Lỗi Scan Server";
-        try {
-          const errObj = await res.json();
-          errStr = errObj.error || errStr;
-        } catch(e) {}
-        throw new Error(errStr);
-      }
-
-      const data = await res.json();
-      setCurrentInput(data.text);
+      const resText = text.trim();
+      setCurrentInput(resText ? resText : "Không tự nhận diện được chữ. Hãy tải lại và chụp nét hơn, hoặc đánh máy thủ công.");
       stopCamera();
       
     } catch (err) {
@@ -95,6 +96,7 @@ function App() {
       alert("Lỗi quét chữ: " + err.message);
     } finally {
       setIsScanning(false);
+      setScanProgress('');
     }
   };
 
@@ -320,7 +322,7 @@ function App() {
 
               {isCameraActive && (
                  <button className="btn primary" onClick={handleCapture} disabled={isScanning} style={{marginBottom: '16px'}}>
-                   {isScanning ? "Đang trích xuất chữ..." : "✨ Chụp & Bóc tách thành phần"}
+                   {isScanning ? scanProgress : "✨ Chụp & Bóc tách thành phần"}
                  </button>
               )}
 
