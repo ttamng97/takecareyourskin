@@ -10,7 +10,7 @@ function App() {
     } catch { return { gender: '', skinType: '', issues: [], budget: '', experience: '' }; }
   });
 
-  const [step, setStep] = useState(profile.skinType ? 'scanner' : 'onboarding'); 
+  const [step, setStep] = useState(profile.skinType ? 'scanner' : 'welcome'); 
   
   useEffect(() => {
     localStorage.setItem('skincare_profile', JSON.stringify(profile));
@@ -160,9 +160,26 @@ function App() {
   return (
     <div className="app-container">
       
-      {step === 'onboarding' && (
+      {step === 'welcome' && (
+        <div className="glass-panel text-center" style={{padding: '40px 20px'}}>
+          <div style={{fontSize: '32px', fontWeight: '800', letterSpacing: '1px', background: 'linear-gradient(to right, #fff, #e8a6b2)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', marginBottom: '16px'}}>AI SKINCARE</div>
+          <div style={{fontSize:'60px', marginBottom:'20px'}}>✨</div>
+          <h2 style={{fontSize: '18px', color: 'rgba(255,255,255,0.9)', marginBottom: '16px', lineHeight: '1.4'}}>
+            Bác sĩ Da Liễu Ảo - Bóc tách sự thật bảng thành phần
+          </h2>
+          <p style={{marginBottom:'32px', color: 'var(--text-secondary)', fontSize: '14px', lineHeight: '1.6'}}>
+            Không còn bị dắt mũi bởi quảng cáo! Phân tích độ an toàn và mức độ tương thích của mọi loại mỹ phẩm dựa trên bộ gen da của chính bạn.
+          </p>
+          
+          <button className="btn primary" onClick={() => setStep('onboarding-1')} style={{padding: '16px', fontSize: '16px'}}>
+            🚀 Tạo Hồ Sơ Da Miễn Phí
+          </button>
+        </div>
+      )}
+
+      {step === 'onboarding-1' && (
         <div className="glass-panel" style={{textAlign: 'left', padding: '24px 20px'}}>
-          <div style={{fontSize: '22px', fontWeight: '700', letterSpacing: '1px', background: 'linear-gradient(to right, #fff, #e8a6b2)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', marginBottom: '24px', textAlign: 'center'}}>AI SKINCARE</div>
+          <div style={{fontSize: '22px', fontWeight: '700', letterSpacing: '1px', background: 'linear-gradient(to right, #fff, #e8a6b2)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', marginBottom: '24px', textAlign: 'center'}}>BƯỚC 1/2</div>
           
           <h3 style={{fontSize: '16px', color: 'var(--accent)'}}>1. Giới tính của bạn</h3>
           <div className="grid-cols-2" style={{marginBottom: '20px'}}>
@@ -179,29 +196,46 @@ function App() {
           </div>
 
           <h3 style={{fontSize: '16px', color: 'var(--accent)'}}>3. Vấn đề đang gặp (Chọn nhiều)</h3>
-          <div className="grid-cols-2" style={{marginBottom: '20px'}}>
+          <div className="grid-cols-2" style={{marginBottom: '28px'}}>
             {['Mụn ẩn', 'Lão hóa', 'Nhạy cảm', 'Sạm nám', 'Mụn viêm', 'Lỗ chân lông to'].map(issue => (
               <button key={issue} className={`btn ${profile.issues.includes(issue) ? 'selected' : ''}`} onClick={() => toggleIssue(issue)} style={{padding: '10px', fontSize: '15px', marginBottom:'0'}}>{issue}</button>
             ))}
           </div>
 
+          <button className="btn primary" disabled={!profile.gender || !profile.skinType} onClick={() => setStep('onboarding-2')}>
+            Tiếp Tục 👉
+          </button>
+        </div>
+      )}
+
+      {step === 'onboarding-2' && (
+        <div className="glass-panel" style={{textAlign: 'left', padding: '24px 20px'}}>
+          <div style={{fontSize: '22px', fontWeight: '700', letterSpacing: '1px', background: 'linear-gradient(to right, #fff, #e8a6b2)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', marginBottom: '24px', textAlign: 'center'}}>BƯỚC 2/2</div>
+
           <h3 style={{fontSize: '16px', color: 'var(--accent)'}}>4. Kinh nghiệm bôi thoa (Treatment)</h3>
-          <div style={{marginBottom: '20px'}}>
+          <p style={{fontSize: '13px', color: 'var(--text-secondary)', marginBottom: '12px'}}>Da bạn đã từng dùng các chất lột tẩy mạnh chưa?</p>
+          <div style={{marginBottom: '24px'}}>
             {['Chưa từng (Da nguyên bản)', 'Mới tập tành (AHA/BHA nhẹ)', 'Lão làng (Đã quen Retinol/Tret)'].map(exp => (
               <button key={exp} className={`btn ${profile.experience === exp ? 'selected' : ''}`} onClick={() => setProfile({...profile, experience: exp})} style={{marginBottom:'8px', width:'100%', padding: '10px', fontSize: '15px'}}>{exp}</button>
             ))}
           </div>
 
-          <h3 style={{fontSize: '16px', color: 'var(--accent)'}}>5. Mức giá thường mua</h3>
+          <h3 style={{fontSize: '16px', color: 'var(--accent)'}}>5. Mức giá sản phẩm thường mua</h3>
+          <p style={{fontSize: '13px', color: 'var(--text-secondary)', marginBottom: '12px'}}>Để loại trừ các món hàng vượt hầu bao.</p>
           <div style={{marginBottom: '28px', display: 'flex', flexDirection: 'column', gap: '8px'}}>
              {['Bình dân (< 300k)', 'Tầm trung (300k - 1 Triệu)', 'Cao cấp (> 1 Triệu)'].map(budget => (
               <button key={budget} className={`btn ${profile.budget === budget ? 'selected' : ''}`} onClick={() => setProfile({...profile, budget})} style={{padding: '10px', fontSize: '15px', margin: 0}}>{budget}</button>
             ))}
           </div>
 
-          <button className="btn primary" disabled={!profile.gender || !profile.skinType || !profile.experience || !profile.budget} onClick={() => setStep('scanner')}>
-            Hoàn Tất Hồ Sơ & Bắt Đầu
-          </button>
+          <div style={{display: 'flex', gap: '10px'}}>
+            <button className="btn secondary" onClick={() => setStep('onboarding-1')} style={{flex: 1}}>
+              🔙 Quay Lại
+            </button>
+            <button className="btn primary" disabled={!profile.experience || !profile.budget} onClick={() => setStep('scanner')} style={{flex: 2}}>
+              Hoàn Tất & Bắt Đầu
+            </button>
+          </div>
         </div>
       )}
 
@@ -247,7 +281,7 @@ function App() {
             <p style={{fontSize: '13px', opacity: 0.8, margin: 0}}>
               Hồ sơ: {profile.skinType} | {profile.budget}
             </p>
-            <span style={{fontSize: '12px', color: 'var(--accent)', cursor: 'pointer', textDecoration: 'underline'}} onClick={() => setStep('onboarding')}>
+            <span style={{fontSize: '12px', color: 'var(--accent)', cursor: 'pointer', textDecoration: 'underline'}} onClick={() => setStep('onboarding-1')}>
               ✏️ Sửa hồ sơ
             </span>
           </div>
