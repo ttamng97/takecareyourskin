@@ -2,8 +2,18 @@ import { useState, useEffect } from 'react';
 import './App.css';
 
 function App() {
-  const [step, setStep] = useState('onboarding-1'); 
-  const [profile, setProfile] = useState({ skinType: '', issues: [], budget: '' });
+  const [profile, setProfile] = useState(() => {
+    try {
+      const saved = localStorage.getItem('skincare_profile');
+      return saved ? JSON.parse(saved) : { skinType: '', issues: [], budget: '' };
+    } catch { return { skinType: '', issues: [], budget: '' }; }
+  });
+
+  const [step, setStep] = useState(profile.skinType ? 'scanner' : 'onboarding-1'); 
+  
+  useEffect(() => {
+    localStorage.setItem('skincare_profile', JSON.stringify(profile));
+  }, [profile]);
   
   // Cross check state
   const [scannedProducts, setScannedProducts] = useState([]);
@@ -221,9 +231,14 @@ function App() {
             </div>
           )}
 
-          <p style={{fontSize: '13px', marginBottom: '16px', opacity: 0.8}}>
-            Hồ sơ: {profile.skinType} | {profile.budget}
-          </p>
+          <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px'}}>
+            <p style={{fontSize: '13px', opacity: 0.8, margin: 0}}>
+              Hồ sơ: {profile.skinType} | {profile.budget}
+            </p>
+            <span style={{fontSize: '12px', color: 'var(--accent)', cursor: 'pointer', textDecoration: 'underline'}} onClick={() => setStep('onboarding-1')}>
+              ✏️ Sửa hồ sơ
+            </span>
+          </div>
           
           {scannedProducts.map((prod, idx) => (
              <div className="product-pill" key={idx}>
