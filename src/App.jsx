@@ -197,7 +197,7 @@ function App() {
       
       {step === 'onboarding-1' && (
         <div className="glass-panel text-center">
-          
+          <div style={{fontSize: '22px', fontWeight: '700', letterSpacing: '1px', background: 'linear-gradient(to right, #fff, #e8a6b2)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', marginBottom: '24px'}}>AI SKINCARE</div>
           <p style={{marginBottom:'24px'}}>Bác sĩ da liễu cá nhân bỏ túi của bạn. Cá nhân hóa phân tích thành phần dựa trên hệ gen da.</p>
           
           <h3 style={{textAlign:'left'}}>✨ Bạn thuộc loại da nào?</h3>
@@ -220,7 +220,7 @@ function App() {
 
       {step === 'onboarding-2' && (
         <div className="glass-panel">
-          
+          <div style={{fontSize: '22px', fontWeight: '700', letterSpacing: '1px', background: 'linear-gradient(to right, #fff, #e8a6b2)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', marginBottom: '24px', textAlign: 'center'}}>AI SKINCARE</div>
           <h3>✨ Tình trạng da hiện tại</h3>
           <p style={{marginBottom: '16px'}}>Bạn có thể chọn nhiều vấn đề</p>
           <div className="grid-cols-2">
@@ -244,7 +244,7 @@ function App() {
 
       {step === 'onboarding-3' && (
         <div className="glass-panel">
-          
+          <div style={{fontSize: '22px', fontWeight: '700', letterSpacing: '1px', background: 'linear-gradient(to right, #fff, #e8a6b2)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', marginBottom: '24px', textAlign: 'center'}}>AI SKINCARE</div>
           <h3>✨ Ngân sách mỹ phẩm</h3>
           <p>Để AI hạn chế việc gợi ý hàng vượt quá túi tiền.</p>
           <br/>
@@ -267,8 +267,8 @@ function App() {
 
       {step === 'scanner' && (
         <div className="glass-panel" style={{padding: '20px 16px', overflowX: 'hidden'}}>
-          <div style={{display:'flex', justifyContent:'space-between', alignItems:'center'}}>
-            
+          <div style={{display:'flex', justifyContent:'center', alignItems:'center', marginBottom: '16px'}}>
+            <div style={{fontSize: '22px', fontWeight: '700', letterSpacing: '1px', background: 'linear-gradient(to right, #fff, #e8a6b2)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent'}}>AI SKINCARE</div>
           </div>
 
           {/* VIRTUAL CLOSET SECTION */}
