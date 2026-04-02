@@ -184,7 +184,7 @@ function App() {
             ))}
           </div>
           <button className="btn primary" disabled={!profile.skinType} onClick={() => setStep('onboarding-2')}>
-            Khai Báo Bệnh Án
+            Tạo Hồ Sơ So Sánh
           </button>
         </div>
       )}
