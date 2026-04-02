@@ -25,7 +25,7 @@ export default async function handler(req) {
     if (products.length === 1) {
       productContext = `SẢN PHẨM KHÁCH VỪA QUÉT:\n${products[0]}`;
     } else {
-      productContext = `SẢN PHẨM 1:\n${products[0]}\n\nSẢN PHẨM 2:\n${products[1]}`;
+      productContext = products.map((p, i) => `SẢN PHẨM ${i+1}:\n${p}`).join('\n\n');
     }
 
     const prompt = `Bạn là chuyên gia da liễu AI cao cấp.
@@ -39,21 +39,22 @@ HỒ SƠ DA KHÁCH HÀNG:
 ${productContext}
 
 NHIỆM VỤ: 
-1. Nếu đầu vào là một dãy số hoặc mã vạch (Serial), hãy sử dụng tệp dữ liệu kiến thức của bạn để truy xuất ra đúng Tên sản phẩm và Thành phần chính của mã vạch đó (hoặc phỏng đoán mỹ phẩm sát nhất).
-2. Phân tích các sản phẩm này. Nếu có 2 sản phẩm, yêu cầu ĐÁNH GIÁ XUNG ĐỘT xem dùng chung có bị kích ứng không (ví dụ: AHA + Retinol).
+1. Nhận diện chính xác Tên sản phẩm. (Nếu đầu vào là dãy số mã vạch, bỏ qua số, tự phán đoán ra tên mỹ phẩm hợp lý nhất hoặc báo lỗi nếu không phải mỹ phẩm).
+2. Phân tích thành phần các sản phẩm này. Nếu khách hàng đưa 3 sản phẩm, BẮT BUỘC phải phân tích và trả về đúng 3 sản phẩm. KHÔNG BỎ SÓT. ĐÁNH GIÁ XUNG ĐỘT TẤT CẢ xem dùng chung có kích ứng không.
 3. Đóng vai chuyên gia Review mĩ phẩm: Nói ngắn gọn, xài ngôn ngữ bình dân, dí dỏm, KHÔNG dùng từ ngữ y khoa khô khan.
 
 TRẢ VỀ STRICT JSON FORMAT:
 {
-"product_name": "Tên sản phẩm (NẾU LÀ MÃ VẠCH, XIN HÃY GHI TÊN NHẬN DIỆN ĐƯỢC CHỨ KHÔNG GHI LẠI SỐ. Kèm '+ SP 2')",
+"analyzed_products": ["Tên chuẩn SP1", "Tên chuẩn SP2", "Tên chuẩn SP3"],
+"product_name": "Tên Hiển Thị Chung (Ví dụ: SP1 + SP2 + SP3)",
 "verdict": "An toàn" hoặc "Rủi ro" hoặc "Xung đột cao",
 "reason": "Giải thích ngắn gọn mấu chốt, bình dân",
 "ingredients": [
-  { "name": "Tên chất (ghi SP nào nếu 2 SP)", "effect": "tác dụng/hại (viết dễ hiểu)", "safety": "green|yellow|red" }
+  { "name": "Tên chất (kèm tên SP)", "effect": "tác dụng/hại (viết dễ hiểu)", "safety": "green|yellow|red" }
 ],
-"cross_check_alert": "Đoạn đánh giá kết hợp dễ hiểu nếu có 2 SP. 1 SP ghi null.",
+"cross_check_alert": "Đoạn đánh giá xung đột dễ hiểu nếu có >1 SP. Nếu 1 SP thì ghi null.",
 "recommendation": "Gợi ý thay thế nếu có nguy hiểm hoặc vượt hầu bao.",
-"recommendation_keyword": "Tên NGẮN GỌN (Từ khóa Shopee) của CHÍNH SẢN PHẨM KHUYÊN THAY THẾ KHI NÃY (Ví dụ: 'The Ordinary Azelaic Acid 10%'). Nếu đồ cũ dùng tốt thì ghi lại tên hãng + tên món đồ cũ."
+"recommendation_keyword": "Từ khóa Shopee SẢN PHẨM KHUYÊN THAY THẾ (hoặc sản phẩm cũ nếu tốt)."
 }`;
 
     const response = await fetch("https://api.deepseek.com/chat/completions", {

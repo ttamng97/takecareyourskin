@@ -180,6 +180,24 @@ function App() {
     window.open(`https://shopee.vn/search?keyword=${query}&utm_campaign=-&utm_content=BocPhotApp&utm_medium=affiliates&utm_source=an_17208190000`, '_blank');
   };
 
+  const handleShareApp = async () => {
+    const shareData = {
+      title: 'Bác Sĩ Da Liễu Ảo',
+      text: 'Bóc phốt mỹ phẩm độc hại và tránh xung đột! Check ngay mỹ phẩm của bạn ở đây:',
+      url: window.location.href
+    };
+    try {
+      if (navigator.share) {
+        await navigator.share(shareData);
+      } else {
+        await navigator.clipboard.writeText(shareData.url);
+        alert('Đã copy link! Hãy dán để gửi cho bạn bè nhé (Facebook, Zalo...).');
+      }
+    } catch (e) {
+      console.log('Share failed:', e);
+    }
+  };
+
   // Remove Logo usage
 
   return (
@@ -374,6 +392,13 @@ function App() {
                </button>
              </>
           )}
+
+          <div style={{marginTop: '30px', textAlign: 'center'}}>
+            <span style={{fontSize: '12px', color: 'rgba(255,255,255,0.4)', display: 'block', marginBottom: '8px'}}>Thấy hay thì Lan toả nhé 👇</span>
+            <button className="btn" onClick={handleShareApp} style={{background: 'var(--glass-bg)', border: '1px solid var(--glass-border)', padding: '10px', fontSize: '13px'}}>
+              🔗 Chia sẻ Web cho bạn bè (Facebook, Threads)
+            </button>
+          </div>
         </div>
       )}
 
