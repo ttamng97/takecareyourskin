@@ -365,6 +365,21 @@ function App() {
       <div style={{textAlign: 'center', marginTop: '24px', opacity: 0.6, fontSize: '13px', color: 'var(--text-secondary)'}}>
         <p>Phần mềm phi lợi nhuận được thiết kế bởi</p>
         <a href="https://bantaikhoan.vn" target="_blank" rel="noopener noreferrer" style={{color: 'var(--accent)', fontWeight: 'bold', textDecoration: 'none'}}>bantaikhoan.vn</a>
+        
+        <div style={{marginTop: '20px', paddingBottom: '20px'}}>
+           <span 
+              onClick={() => {
+                 if(window.confirm("Cảnh báo: Bạn sẽ xóa sạch Hồ sơ da và Tủ đồ ảo để làm lại từ đầu. Xác nhận?")) {
+                    localStorage.removeItem('skincare_profile');
+                    localStorage.removeItem('skincare_closet');
+                    window.location.reload();
+                 }
+              }} 
+              style={{cursor:'pointer', textDecoration:'underline', fontSize:'11px', color:'var(--danger)'}}
+           >
+              🗑️ Xóa toàn bộ Cài đặt & Tủ đồ
+           </span>
+        </div>
       </div>
 
     </div>
