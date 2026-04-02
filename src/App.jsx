@@ -410,6 +410,12 @@ function App() {
         </div>
       )}
 
+      {/* FOOTER */}
+      <div style={{textAlign: 'center', marginTop: '24px', opacity: 0.6, fontSize: '13px', color: 'var(--text-secondary)'}}>
+        <p>Phần mềm phi lợi nhuận được thiết kế bởi</p>
+        <a href="https://bantaikhoan.vn" target="_blank" rel="noopener noreferrer" style={{color: 'var(--accent)', fontWeight: 'bold', textDecoration: 'none'}}>bantaikhoan.vn</a>
+      </div>
+
     </div>
   );
 }
