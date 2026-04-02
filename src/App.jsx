@@ -151,8 +151,8 @@ function App() {
   const openShopeeAffiliate = () => {
     if (!analysisResult || !analysisResult.product_name) return;
     const query = encodeURIComponent(analysisResult.product_name);
-    // Bouncing through a custom link is standard for KOCs. We use raw search here with tracking placeholders.
-    window.open(`https://shopee.vn/search?keyword=${query}&utm_source=bantaikhoan.vn&utm_medium=affiliate`, '_blank');
+    // User's Publisher ID: an_17208190000
+    window.open(`https://shopee.vn/search?keyword=${query}&utm_campaign=-&utm_content=BocPhotApp&utm_medium=affiliates&utm_source=an_17208190000`, '_blank');
   };
 
   // Remove Logo usage
