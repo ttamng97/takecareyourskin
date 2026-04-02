@@ -233,8 +233,8 @@ function App() {
       {step === 'onboarding-3' && (
         <div className="glass-panel text-center">
           <div style={{fontSize: '22px', fontWeight: '700', letterSpacing: '1px', background: 'linear-gradient(to right, #fff, #e8a6b2)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', marginBottom: '24px', textAlign: 'center'}}>AI SKINCARE</div>
-          <h3>✨ Ngân sách mỹ phẩm</h3>
-          <p>Để AI hạn chế việc gợi ý hàng vượt quá túi tiền.</p>
+          <h3>✨ Mức giá mỹ phẩm thường dùng</h3>
+          <p>Để AI gợi ý các bến đỗ làm đẹp phù hợp với thói quen của bạn.</p>
           <br/>
           <div className="ingredient-list">
             {['Bình dân (< 300k)', 'Tầm trung (300k - 1 Triệu)', 'Cao cấp (> 1 Triệu)'].map(budget => (
