@@ -36,10 +36,13 @@ HỒ SƠ DA KHÁCH HÀNG:
 
 ${productContext}
 
-NHIỆM VỤ: Phân tích các sản phẩm này. Nếu có 2 sản phẩm, yêu cầu ĐÁNH GIÁ XUNG ĐỘT xem dùng chung có bị kích ứng không (ví dụ: AHA + Retinol).
+NHIỆM VỤ: 
+1. Nếu đầu vào là một dãy số hoặc mã vạch (Serial), hãy sử dụng tệp dữ liệu kiến thức của bạn để truy xuất ra đúng Tên sản phẩm và Thành phần chính của mã vạch đó (hoặc phỏng đoán mỹ phẩm sát nhất).
+2. Phân tích các sản phẩm này. Nếu có 2 sản phẩm, yêu cầu ĐÁNH GIÁ XUNG ĐỘT xem dùng chung có bị kích ứng không (ví dụ: AHA + Retinol).
+
 TRẢ VỀ STRICT JSON FORMAT:
 {
-"product_name": "Tên sản phẩm (2 SP ghi: 'SP 1 + SP 2')",
+"product_name": "Tên sản phẩm (NẾU LÀ MÃ VẠCH, XIN HÃY GHI TÊN NHẬN DIỆN ĐƯỢC CHỨ KHÔNG GHI LẠI SỐ. Kèm '+ SP 2')",
 "verdict": "An toàn" hoặc "Rủi ro" hoặc "Xung đột cao",
 "reason": "Giải thích ngắn gọn mấu chốt",
 "ingredients": [
