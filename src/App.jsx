@@ -6,8 +6,8 @@ function App() {
   const [profile, setProfile] = useState(() => {
     try {
       const saved = localStorage.getItem('skincare_profile');
-      return saved ? JSON.parse(saved) : { gender: '', skinType: '', issues: [], budget: '', experience: '' };
-    } catch { return { gender: '', skinType: '', issues: [], budget: '', experience: '' }; }
+      return saved ? JSON.parse(saved) : { gender: '', age: 25, skinType: '', issues: [], budget: '', experience: '' };
+    } catch { return { gender: '', age: 25, skinType: '', issues: [], budget: '', experience: '' }; }
   });
 
   const [step, setStep] = useState(profile.skinType ? 'scanner' : 'welcome'); 
@@ -64,14 +64,24 @@ function App() {
   };
 
   const saveToCloset = () => {
-    if (analysisResult && analysisResult.product_name) {
-      const name = analysisResult.product_name;
-      if (!closet.includes(name) && name !== 'Sản phẩm chưa rõ') {
-        setCloset([...closet, name]);
-        alert("Đã cất vào Tủ Đồ Ảo thành công! 💖");
-      } else {
-        alert("Sản phẩm đã có trong tủ hoặc tên không hợp lệ.");
+    if (!analysisResult || (!analysisResult.analyzed_products && !analysisResult.product_name)) return;
+    
+    let itemsToSave = analysisResult.analyzed_products || [analysisResult.product_name];
+    let newCloset = [...closet];
+    let addedCount = 0;
+
+    itemsToSave.forEach(name => {
+      if (!newCloset.includes(name) && name !== 'Sản phẩm chưa rõ') {
+        newCloset.push(name);
+        addedCount++;
       }
+    });
+
+    if (addedCount > 0) {
+      setCloset(newCloset);
+      alert(`Đã cất ${addedCount} món vào Tủ Đồ Ảo thành công! 💖`);
+    } else {
+      alert("Tất cả món này đã có rùi!");
     }
   };
 
@@ -120,8 +130,8 @@ function App() {
       return;
     }
     
-    if (toProcess.length > 2) {
-      toProcess = [toProcess[0], toProcess[1]];
+    if (toProcess.length > 3) {
+      toProcess = [toProcess[0], toProcess[1], toProcess[2]];
     }
 
     analyzeWithDeepSeek(toProcess);
@@ -192,14 +202,26 @@ function App() {
             ))}
           </div>
 
-          <h3 style={{fontSize: '16px', color: 'var(--accent)'}}>2. Loại da cơ bản</h3>
+          <h3 style={{fontSize: '16px', color: 'var(--accent)'}}>2. Độ tuổi: <span style={{color:'#fff', fontWeight:'bold'}}>{profile.age}</span> tuổi</h3>
+          <div style={{marginBottom: '20px', padding: '0 8px'}}>
+            <input 
+              type="range" 
+              min="12" 
+              max="65" 
+              value={profile.age || 25} 
+              onChange={e => setProfile({...profile, age: e.target.value})}
+              style={{width: '100%', accentColor: 'var(--accent)', cursor: 'pointer'}}
+            />
+          </div>
+
+          <h3 style={{fontSize: '16px', color: 'var(--accent)'}}>3. Loại da cơ bản</h3>
           <div className="grid-cols-2" style={{marginBottom: '20px'}}>
             {['Da khô', 'Da thường', 'Da dầu', 'Da hỗn hợp'].map(type => (
               <button key={type} className={`btn ${profile.skinType === type ? 'selected' : ''}`} onClick={() => setProfile({...profile, skinType: type})} style={{padding: '10px', fontSize: '15px', marginBottom:'0'}}>{type}</button>
             ))}
           </div>
 
-          <h3 style={{fontSize: '16px', color: 'var(--accent)'}}>3. Vấn đề đang gặp (Chọn nhiều)</h3>
+          <h3 style={{fontSize: '16px', color: 'var(--accent)'}}>4. Vấn đề đang gặp (Chọn nhiều)</h3>
           <div className="grid-cols-2" style={{marginBottom: '28px'}}>
             {['Mụn ẩn', 'Lão hóa', 'Nhạy cảm', 'Sạm nám', 'Mụn viêm', 'Lỗ chân lông to'].map(issue => (
               <button key={issue} className={`btn ${profile.issues.includes(issue) ? 'selected' : ''}`} onClick={() => toggleIssue(issue)} style={{padding: '10px', fontSize: '15px', marginBottom:'0'}}>{issue}</button>
@@ -216,7 +238,7 @@ function App() {
         <div className="glass-panel" style={{textAlign: 'left', padding: '24px 20px'}}>
           <div style={{fontSize: '22px', fontWeight: '700', letterSpacing: '1px', background: 'linear-gradient(to right, #fff, #e8a6b2)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', marginBottom: '24px', textAlign: 'center'}}>BƯỚC 2/2</div>
 
-          <h3 style={{fontSize: '16px', color: 'var(--accent)'}}>4. Kinh nghiệm bôi thoa (Treatment)</h3>
+          <h3 style={{fontSize: '16px', color: 'var(--accent)'}}>5. Kinh nghiệm bôi thoa (Treatment)</h3>
           <p style={{fontSize: '13px', color: 'var(--text-secondary)', marginBottom: '12px'}}>Da bạn đã từng dùng các chất lột tẩy mạnh chưa?</p>
           <div style={{marginBottom: '24px'}}>
             {['Chưa từng (Da nguyên bản)', 'Mới tập tành (AHA/BHA nhẹ)', 'Lão làng (Đã quen Retinol/Tret)'].map(exp => (
@@ -224,7 +246,7 @@ function App() {
             ))}
           </div>
 
-          <h3 style={{fontSize: '16px', color: 'var(--accent)'}}>5. Mức giá sản phẩm thường mua</h3>
+          <h3 style={{fontSize: '16px', color: 'var(--accent)'}}>6. Mức giá sản phẩm thường mua</h3>
           <p style={{fontSize: '13px', color: 'var(--text-secondary)', marginBottom: '12px'}}>Để loại trừ các món hàng vượt hầu bao.</p>
           <div style={{marginBottom: '28px', display: 'flex', flexDirection: 'column', gap: '8px'}}>
              {['Bình dân (< 300k)', 'Tầm trung (300k - 1 Triệu)', 'Cao cấp (> 1 Triệu)'].map(budget => (
@@ -294,7 +316,7 @@ function App() {
              </div>
           ))}
 
-          {scannedProducts.length < 2 ? (
+          {scannedProducts.length < 3 ? (
             <>
               <p style={{fontSize: '14px', marginBottom: '8px', color: 'var(--accent)'}}>Nhập chính xác tên Sản phẩm (Không nhập Mã vạch/Số):</p>
               <textarea 
@@ -321,12 +343,12 @@ function App() {
                 onClick={addProductToCart}
                 disabled={!currentInput.trim()}
               >
-                {scannedProducts.length === 0 ? "➕ Đưa vào rổ để chờ Gộp Phân Tích Chéo" : "➕ Thêm món thứ 2 vào rổ"}
+                {scannedProducts.length === 0 ? "➕ Đưa vào rổ để KIỂM TRA XUNG ĐỘT (Tối đa 3 món)" : `➕ Thêm Sản Phẩm Thứ ${scannedProducts.length + 1} Vào Rổ`}
               </button>
             </>
           ) : (
              <p style={{color: 'var(--success)', textAlign: 'center', margin: '20px 0', fontWeight:'600'}}>
-               Đã đủ 2 sản phẩm để thực hiện Hội chuẩn Chéo!
+               Đã đủ 3 sản phẩm để Hội chuẩn Xung Đột Chéo!
              </p>
           )}
 
@@ -350,8 +372,8 @@ function App() {
           <div className="loader" style={{marginBottom: '24px'}}></div>
           <h2>Bác sĩ đang vắt óc<span className="typing-dot"></span></h2>
           <p>Truy xuất kho dữ liệu SkinSort Châu Á...</p>
-          <p>Mô phỏng phản ứng sinh hóa học...</p>
-          <p>Lùng sục hàng chuẩn Auth giá tốt...</p>
+          <p>Tính toán hệ gen dựa trên tuổi {profile.age}...</p>
+          <p>Mua sắm ưu đãi từ Shopee Mall...</p>
         </div>
       )}
 
@@ -362,7 +384,7 @@ function App() {
           <h2 style={{fontSize: '22px', lineHeight: '1.3'}}>{analysisResult.product_name}</h2>
           
           <button data-html2canvas-ignore className="btn secondary" onClick={saveToCloset} style={{padding: '10px 16px', fontSize: '14px', marginBottom: '16px'}}>
-            👜 Cất chai này vào Tủ Đồ Ảo
+            👜 Cất từng chai này vào Tủ Đồ Ảo
           </button>
 
           <div className={`alert-box ${analysisResult.verdict === 'An toàn' ? 'success' : 'danger'}`}>
