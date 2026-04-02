@@ -1,5 +1,4 @@
-import { useState, useRef, useEffect } from 'react';
-import Tesseract from 'tesseract.js';
+import { useState, useEffect } from 'react';
 import './App.css';
 
 function App() {
@@ -22,10 +21,6 @@ function App() {
     localStorage.setItem('skincare_closet', JSON.stringify(closet));
   }, [closet]);
   
-  const videoRef = useRef(null);
-  const [isCameraActive, setIsCameraActive] = useState(false);
-  const [isScanning, setIsScanning] = useState(false);
-  const [scanProgress, setScanProgress] = useState('');
   const [analysisResult, setAnalysisResult] = useState(null);
 
   const toggleIssue = (issue) => {
@@ -37,76 +32,10 @@ function App() {
     }));
   };
 
-  const startCamera = async () => {
-    try {
-      const stream = await navigator.mediaDevices.getUserMedia({ 
-        video: { facingMode: 'environment' } 
-      });
-      if (videoRef.current) {
-        videoRef.current.srcObject = stream;
-        setIsCameraActive(true);
-      }
-    } catch (err) {
-      console.warn("Camera not available", err);
-      alert("Không thể mở Camera. Vui lòng thử nhập chữ thay thế.");
-    }
-  };
-
-  const stopCamera = () => {
-    if (videoRef.current && videoRef.current.srcObject) {
-      videoRef.current.srcObject.getTracks().forEach(track => track.stop());
-      setIsCameraActive(false);
-    }
-  };
-
-  const handleCapture = async () => {
-    if (!videoRef.current) return;
-    
-    const canvas = document.createElement('canvas');
-    canvas.width = videoRef.current.videoWidth;
-    canvas.height = videoRef.current.videoHeight;
-    const ctx = canvas.getContext('2d');
-    ctx.drawImage(videoRef.current, 0, 0, canvas.width, canvas.height);
-    
-    const base64Image = canvas.toDataURL('image/jpeg', 0.6);
-    
-    setIsScanning(true);
-    setScanProgress('Đang khởi động Mắt Thần Offline...');
-
-    try {
-      const { data: { text } } = await Tesseract.recognize(
-        base64Image,
-        'eng',
-        { logger: m => {
-            if (m.status === 'recognizing text') {
-              setScanProgress(`Đang dịch chữ (${Math.round(m.progress * 100)}%)...`);
-            } else {
-              setScanProgress('Đang tải dữ liệu AI (Chỉ lâu ở lần đầu)...');
-            }
-          } 
-        }
-      );
-
-      const resText = text.trim();
-      setCurrentInput(resText ? resText : "Không tự nhận diện được chữ. Hãy tải lại và chụp nét hơn, hoặc đánh máy thủ công.");
-      stopCamera();
-      
-    } catch (err) {
-      console.error(err);
-      alert("Lỗi quét chữ: " + err.message);
-    } finally {
-      setIsScanning(false);
-      setScanProgress('');
-    }
-  };
-
   useEffect(() => {
     if (step === 'scanner') {
       setAnalysisResult(null);
-    } else {
-      stopCamera();
     }
-    return stopCamera;
   }, [step]);
 
   const addProductToCart = () => {
@@ -304,29 +233,7 @@ function App() {
 
           {scannedProducts.length < 2 ? (
             <>
-              <div className={`scanner-frame ${isCameraActive ? 'active' : ''}`} style={{background: isCameraActive ? '#000' : 'rgba(0,0,0,0.3)', borderStyle: isCameraActive ? 'solid' : 'dashed'}}>
-                <video 
-                   ref={videoRef} 
-                   className="scanner-video" 
-                   autoPlay playsInline 
-                   style={{ display: isCameraActive ? 'block' : 'none' }}
-                ></video>
-                {isCameraActive && <div className="scan-line"></div>}
-                
-                {!isCameraActive && (
-                   <button className="btn secondary" style={{width: 'auto'}} onClick={startCamera}>
-                     📸 Soi Camera
-                   </button>
-                )}
-              </div>
-
-              {isCameraActive && (
-                 <button className="btn primary" onClick={handleCapture} disabled={isScanning} style={{marginBottom: '16px'}}>
-                   {isScanning ? scanProgress : "✨ Chụp & Bóc tách thành phần"}
-                 </button>
-              )}
-
-              <p style={{fontSize: '14px', marginBottom: '8px'}}>Hoặc nhập tên sản phẩm:</p>
+              <p style={{fontSize: '14px', marginBottom: '8px'}}>Nhập tên sản phẩm (DeepSeek sẽ tự kiếm thành phần):</p>
               <textarea 
                 rows="2" 
                 placeholder="VD: Obagi Retinol 1.0..."
