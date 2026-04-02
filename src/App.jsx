@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import html2canvas from 'html2canvas';
 import './App.css';
 
 function App() {
@@ -129,6 +130,27 @@ function App() {
     setCurrentInput('');
     setAnalysisResult(null);
     setStep('scanner');
+  };
+
+  const downloadImage = async () => {
+    const el = document.getElementById('capture-zone');
+    if (!el) return;
+    try {
+      const canvas = await html2canvas(el, { backgroundColor: '#141414', scale: 2 });
+      const link = document.createElement('a');
+      link.download = `PhanTich_${Date.now()}.png`;
+      link.href = canvas.toDataURL('image/png');
+      link.click();
+    } catch (e) {
+      alert("Lỗi tạo ảnh: " + e.message);
+    }
+  };
+
+  const openShopeeAffiliate = () => {
+    if (!analysisResult || !analysisResult.product_name) return;
+    const query = encodeURIComponent(analysisResult.product_name);
+    // Bouncing through a custom link is standard for KOCs. We use raw search here with tracking placeholders.
+    window.open(`https://shopee.vn/search?keyword=${query}&utm_source=bantaikhoan.vn&utm_medium=affiliate`, '_blank');
   };
 
   // Remove Logo usage
@@ -318,12 +340,12 @@ function App() {
       )}
 
       {step === 'result' && analysisResult && (
-        <div className="glass-panel" style={{padding: '24px 20px'}}>
-          <div style={{fontSize: '22px', fontWeight: '700', letterSpacing: '1px', background: 'linear-gradient(to right, #fff, #e8a6b2)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', marginBottom: '24px', textAlign: 'center'}}>AI SKINCARE</div>
+        <div id="capture-zone" className="glass-panel" style={{padding: '24px 20px', position: 'relative'}}>
+          <div style={{fontSize: '22px', fontWeight: '700', letterSpacing: '1px', background: 'linear-gradient(to right, #fff, #e8a6b2)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', marginBottom: '8px', textAlign: 'center'}}>AI SKINCARE</div>
           
           <h2 style={{fontSize: '22px', lineHeight: '1.3'}}>{analysisResult.product_name}</h2>
           
-          <button className="btn secondary" onClick={saveToCloset} style={{padding: '10px 16px', fontSize: '14px', marginBottom: '16px'}}>
+          <button data-html2canvas-ignore className="btn secondary" onClick={saveToCloset} style={{padding: '10px 16px', fontSize: '14px', marginBottom: '16px'}}>
             👜 Cất chai này vào Tủ Đồ Ảo
           </button>
 
@@ -362,14 +384,24 @@ function App() {
           <div style={{marginTop: '28px', padding: '20px', background: 'rgba(232, 166, 178, 0.1)', borderRadius: '16px', border: '1px solid var(--glass-border)', position:'relative', overflow:'hidden'}}>
             <div style={{position:'absolute', top:'-10px', right:'-10px', fontSize:'80px', opacity:'0.1'}}>🛒</div>
             <h3 style={{color: 'var(--accent)', display: 'flex', alignItems: 'center'}}>
-              <span style={{marginRight: '8px', fontSize: '20px'}}>💡</span> Gợi Ý Chuẩn Auth & Rẻ
+              <span style={{marginRight: '8px', fontSize: '20px'}}>💡</span> Gợi Ý Mua Hàng Chuẩn Auth
             </h3>
             <p style={{fontSize: '15px', position:'relative', zIndex:1}}>{analysisResult.recommendation}</p>
-            <button className="btn primary" style={{marginTop:'16px'}}>👉 Chốt Đơn Hàng Này (Affiliate Demo)</button>
+            <button data-html2canvas-ignore className="btn primary" style={{marginTop:'16px'}} onClick={openShopeeAffiliate}>
+              👉 Mở Shopee Tìm Hàng Chuẩn (Có KM)
+            </button>
           </div>
 
-          <button className="btn secondary" onClick={resetAll} style={{marginTop: '32px', border:'none', background:'rgba(255,255,255,0.05)'}}>
-            ↺ Thực hiện phiên soi da mới
+          <div style={{textAlign: 'center', marginTop: '30px', opacity: 0.3, fontSize: '12px'}}>
+            Tài trợ phi lợi nhuận bởi bantaikhoan.vn
+          </div>
+
+          <button data-html2canvas-ignore className="btn primary" onClick={downloadImage} style={{marginTop: '24px', background: 'var(--glass-bg)', color: '#fff', border: '1px solid var(--glass-border)'}}>
+            📸 Tải Ảnh Kết Quả Này & Chia Sẻ
+          </button>
+
+          <button data-html2canvas-ignore className="btn secondary" onClick={resetAll} style={{marginTop: '12px', border:'none', background:'rgba(255,255,255,0.05)'}}>
+            ↺ Đóng & Phiên soi da mới
           </button>
         </div>
       )}
