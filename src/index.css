@@ -112,6 +112,10 @@ p { color: var(--text-secondary); line-height: 1.6; font-size: 15px; }
 @keyframes pulseGlow { 0% { box-shadow: 0 0 0 0 rgba(232, 166, 178, 0.4); } 70% { box-shadow: 0 0 0 15px rgba(232, 166, 178, 0); } 100% { box-shadow: 0 0 0 0 rgba(232, 166, 178, 0); } }
 @keyframes scanLine { 0% { top: 0; } 50% { top: 100%; } 100% { top: 0; } }
 
+.scanner-line {
+  animation: scanLine 2s linear infinite;
+}
+
 /* Form inputs */
 textarea, input {
   width: 100%;
@@ -127,6 +131,12 @@ textarea, input {
   resize: none;
 }
 textarea:focus, input:focus { border-color: var(--accent); background: rgba(0,0,0,0.4); }
+
+/* Form inputs scrollbar */
+textarea::-webkit-scrollbar { width: 8px; }
+textarea::-webkit-scrollbar-track { background: transparent; }
+textarea::-webkit-scrollbar-thumb { background: rgba(232, 166, 178, 0.3); border-radius: 4px; }
+textarea::-webkit-scrollbar-thumb:hover { background: rgba(232, 166, 178, 0.6); }
 
 /* Scanner Mock UI */
 .scanner-frame {
